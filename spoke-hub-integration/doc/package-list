@@ -1,0 +1,5 @@
+
+org.jenkinsci.plugins.spokehubintegration
+org.jenkinsci.plugins.spokehubintegration.command
+org.jenkinsci.plugins.spokehubintegration.exception
+org.jenkinsci.plugins.spokehubintegration.utility
