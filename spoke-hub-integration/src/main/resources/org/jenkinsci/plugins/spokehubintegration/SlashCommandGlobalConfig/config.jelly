@@ -1,0 +1,10 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="Slack Slash Command Settings">
+    <f:entry title="Slash Command Token" field="slackSlashCommandToken" help="${rootURL}/plugin/spoke-hub-integration/help-slackSlashCommandToken.html">
+      <f:textbox />
+    </f:entry>
+	<f:entry title="Response visible to all members of the channel" field="responseType" help="${rootURL}/plugin/spoke-hub-integration/help-responseType.html">
+      <f:checkbox />
+    </f:entry>
+  </f:section>
+</j:jelly>

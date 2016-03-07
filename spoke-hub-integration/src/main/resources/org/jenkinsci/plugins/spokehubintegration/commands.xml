@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<calls>
+	<call command="build">
+		<class>org.jenkinsci.plugins.spokehubintegration.command.JenkinsInvoker</class>
+		<method>build</method>
+		<parameter>org.jenkinsci.plugins.spokehubintegration.command.BuildCommand</parameter>
+	</call>
+	<call command="test">
+		<class>org.jenkinsci.plugins.spokehubintegration.command.JenkinsInvoker</class>
+		<method>test</method>
+		<parameter>org.jenkinsci.plugins.spokehubintegration.command.TestCommand</parameter>
+	</call>
+	<call command="list-jobs">
+		<class>org.jenkinsci.plugins.spokehubintegration.command.JenkinsInvoker</class>
+		<method>listJobs</method>
+		<parameter>org.jenkinsci.plugins.spokehubintegration.command.ListCommand</parameter>
+	</call>
+	<call command="help">
+		<class>org.jenkinsci.plugins.spokehubintegration.command.JenkinsInvoker</class>
+		<method>help</method>
+		<parameter>org.jenkinsci.plugins.spokehubintegration.command.HelpCommand</parameter>
+	</call>
+</calls>
