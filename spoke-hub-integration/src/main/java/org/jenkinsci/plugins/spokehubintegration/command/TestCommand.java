@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.spokehubintegration.command;
 
-import org.jenkinsci.plugins.spokehubintegration.JSONResponse;
 import org.jenkinsci.plugins.spokehubintegration.SlackData;
+import org.jenkinsci.plugins.spokehubintegration.SlackMessage;
 
 /**
  * Class that implements {@link Command} interface and identifies the command 'test'.
@@ -16,14 +16,14 @@ public class TestCommand implements Command {
 	/**
 	 * Initializes a newly created {@link JenkinsReceiver} object.
 	 * 
-	 * @param receiver - object that performs the execution of the commands
+	 * @param receiver object that performs the execution of the commands
 	 */
 	public TestCommand(JenkinsReceiver receiver) {
 		this.receiver = receiver;
 	}
 
 	@Override
-	public JSONResponse execute(SlackData data) {
+	public SlackMessage execute(SlackData data) {
 		return this.receiver.test(data);
 	}
 

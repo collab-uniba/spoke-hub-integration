@@ -12,7 +12,6 @@ import hudson.model.StringParameterDefinition;
 import hudson.tasks.Shell;
 
 import org.apache.commons.io.FileUtils;
-import org.jenkinsci.plugins.spokehubintegration.JSONResponse;
 import org.jenkinsci.plugins.spokehubintegration.SlackData;
 import org.jenkinsci.plugins.spokehubintegration.SlackMessage;
 import org.junit.After;
@@ -20,7 +19,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.kohsuke.stapler.StaplerResponse;
 
 public class JenkinsReceiverTest {
 	
@@ -67,12 +65,11 @@ public class JenkinsReceiverTest {
 			data.setText(text);
 			String user_name = "tommyv92";
 			data.setUser_name(user_name);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.buildScheduled(projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.good()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.good());
 			
 			while (freestyle.isInQueue());
 			while (freestyle.isBuilding());
@@ -107,12 +104,11 @@ public class JenkinsReceiverTest {
 			data.setText(text);
 			String user_name = "tommyv92";
 			data.setUser_name(user_name);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.buildScheduled(projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.good()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.good());
 			
 			while (freestyle.isInQueue());
 			while (freestyle.isBuilding());
@@ -146,12 +142,11 @@ public class JenkinsReceiverTest {
 			data.setText(text);
 			String user_name = "tommyv92";
 			data.setUser_name(user_name);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.buildScheduled(projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.good()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.good());
 			
 			while (freestyle.isInQueue());
 			while (freestyle.isBuilding());
@@ -188,12 +183,11 @@ public class JenkinsReceiverTest {
 			data.setText(text);
 			String user_name = "tommyv92";
 			data.setUser_name(user_name);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.buildScheduled(projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.good()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.good());
 			
 			while (freestyle.isInQueue());
 			while (freestyle.isBuilding());
@@ -218,11 +212,10 @@ public class JenkinsReceiverTest {
 		SlackData data = new SlackData();
 		String command = "build";
 		data.setText(command);
-		JSONResponse actual = this.receiver.build(data);
+		SlackMessage actual = this.receiver.build(data);
 		
 		String message = Messages.incompleteCommandSyntax(command);
-		JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-				Messages.danger()), StaplerResponse.SC_OK);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -236,11 +229,10 @@ public class JenkinsReceiverTest {
 		SlackData data = new SlackData();
 		String command = "build Free-style -p";
 		data.setText(command);
-		JSONResponse actual = this.receiver.build(data);
+		SlackMessage actual = this.receiver.build(data);
 		
 		String message = Messages.incompleteCommandSyntax(command.split(" ")[COMMAND_INDEX]);
-		JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-				Messages.danger()), StaplerResponse.SC_OK);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -254,11 +246,11 @@ public class JenkinsReceiverTest {
 		SlackData data = new SlackData();
 		String text = "build Free-style";
 		data.setText(text);
-		JSONResponse actual = this.receiver.build(data);
+		SlackMessage actual = this.receiver.build(data);
 		
 		String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.projectNotFound(projectName), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.projectNotFound(projectName);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -280,12 +272,11 @@ public class JenkinsReceiverTest {
 			SlackData data = new SlackData();
 			String text = "build Free-style -p key=newValue -p key1=value1";
 			data.setText(text);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.tooManyParameters(projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.danger()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -311,12 +302,11 @@ public class JenkinsReceiverTest {
 			String parameter = "p key=newValue";
 			String text = "build Free-style " + parameter;
 			data.setText(text);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.wrongParameterSyntax(parameter, projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.danger()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -341,12 +331,11 @@ public class JenkinsReceiverTest {
 			String parameter = "-p 1key=newValue";
 			String text = "build Free-style " + parameter;
 			data.setText(text);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.wrongParameterSyntax(parameter, projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.danger()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -372,12 +361,11 @@ public class JenkinsReceiverTest {
 			String parameter = "-p " + newKey + "=newValue";
 			String text = "build Free-style " + parameter;
 			data.setText(text);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.invalidParameter(newKey, projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.danger()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -406,12 +394,11 @@ public class JenkinsReceiverTest {
 			String key = "key";
 			String text = "build Free-style -p " + key + "=newValue -p " + key + "=newValue";
 			data.setText(text);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.invalidParameter(key, projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.danger()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -432,12 +419,11 @@ public class JenkinsReceiverTest {
 			SlackData data = new SlackData();
 			String text = "build Free-style -p key=value";
 			data.setText(text);
-			JSONResponse actual = this.receiver.build(data);
+			SlackMessage actual = this.receiver.build(data);
 			
 			String projectName = text.split(" ")[JOB_PARAMETER_INDEX];
 			String message = Messages.buildNotParameterized(projectName);
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.danger()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -490,10 +476,10 @@ public class JenkinsReceiverTest {
 			data.setText("test Maven all");
 			String user_name = "tommyv92";
 			data.setUser_name(user_name);
-			JSONResponse actual = this.receiver.test(data);
+			data.setResponse_url("https://hooks.slack.com/commands/1234/5678");
+			SlackMessage actual = this.receiver.test(data);
 			
-			JSONResponse expected = new JSONResponse(new SlackMessage(null, null), 
-					StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(null, null);
 			
 			MavenModuleSetBuild build = maven.getLastBuild();
 			String log = FileUtils.readFileToString(build.getLogFile());
@@ -523,10 +509,10 @@ public class JenkinsReceiverTest {
 			data.setText("test Maven class ClassName");
 			String user_name = "tommyv92";
 			data.setUser_name(user_name);
-			JSONResponse actual = this.receiver.test(data);
+			data.setResponse_url("https://hooks.slack.com/commands/1234/5678");
+			SlackMessage actual = this.receiver.test(data);
 			
-			JSONResponse expected = new JSONResponse(new SlackMessage(null, null), 
-					StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(null, null);
 			
 			MavenModuleSetBuild build = maven.getLastBuild();
 			String log = FileUtils.readFileToString(build.getLogFile());
@@ -548,11 +534,11 @@ public class JenkinsReceiverTest {
 	public void testTest3() {
 		SlackData data = new SlackData();
 		data.setText("test Maven");
-		JSONResponse actual = this.receiver.test(data);
+		SlackMessage actual = this.receiver.test(data);
 		
 		String command = data.getText().split(" ")[COMMAND_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.incompleteCommandSyntax(command), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.incompleteCommandSyntax(command);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -566,11 +552,11 @@ public class JenkinsReceiverTest {
 	public void testTest4() {
 		SlackData data = new SlackData();
 		data.setText("test Maven all");
-		JSONResponse actual = this.receiver.test(data);
+		SlackMessage actual = this.receiver.test(data);
 		
 		String projectName = data.getText().split(" ")[JOB_PARAMETER_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.projectNotFound(projectName), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.projectNotFound(projectName);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -586,11 +572,11 @@ public class JenkinsReceiverTest {
 			this.jenkins.createFreeStyleProject("Free-style");
 			SlackData data = new SlackData();
 			data.setText("test Free-style all");
-			JSONResponse actual = this.receiver.test(data);
+			SlackMessage actual = this.receiver.test(data);
 			
 			String projectName = data.getText().split(" ")[JOB_PARAMETER_INDEX];
-			JSONResponse expected = new JSONResponse(new SlackMessage(Messages.notMavenProject(projectName), 
-					Messages.danger()), StaplerResponse.SC_OK);
+			String message = Messages.notMavenProject(projectName);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -610,11 +596,11 @@ public class JenkinsReceiverTest {
 			
 			SlackData data = new SlackData();
 			data.setText("test Maven scope");
-			JSONResponse actual = this.receiver.test(data);
+			SlackMessage actual = this.receiver.test(data);
 			
 			String scope = data.getText().split(" ")[SCOPE_PARAMETER_INDEX];
-			JSONResponse expected = new JSONResponse(new SlackMessage(Messages.invalidTestScope(scope), 
-					Messages.danger()), StaplerResponse.SC_OK);
+			String message = Messages.invalidTestScope(scope);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -634,12 +620,12 @@ public class JenkinsReceiverTest {
 			
 			SlackData data = new SlackData();
 			data.setText("test Maven all token");
-			JSONResponse actual = this.receiver.test(data);
+			SlackMessage actual = this.receiver.test(data);
 			
 			String command = data.getText().split(" ")[COMMAND_INDEX];
 			String projectName = data.getText().split(" ")[JOB_PARAMETER_INDEX];
-			JSONResponse expected = new JSONResponse(new SlackMessage(Messages.wrongCommandSyntax(command, projectName), 
-					Messages.danger()), StaplerResponse.SC_OK);
+			String message = Messages.wrongCommandSyntax(command, projectName);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -660,12 +646,12 @@ public class JenkinsReceiverTest {
 			
 			SlackData data = new SlackData();
 			data.setText("test Maven class ClassName token");
-			JSONResponse actual = this.receiver.test(data);
+			SlackMessage actual = this.receiver.test(data);
 			
 			String command = data.getText().split(" ")[COMMAND_INDEX];
 			String projectName = data.getText().split(" ")[JOB_PARAMETER_INDEX];
-			JSONResponse expected = new JSONResponse(new SlackMessage(Messages.wrongCommandSyntax(command, projectName), 
-					Messages.danger()), StaplerResponse.SC_OK);
+			String message = Messages.wrongCommandSyntax(command, projectName);
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -680,6 +666,7 @@ public class JenkinsReceiverTest {
 	public void testTest9() {
 		try {
 			SlackData data = new SlackData();
+			data.setResponse_url("https://hooks.slack.com/commands/1234/5678");
 			this.receiver.test(data);
 			
 			assert false;
@@ -689,10 +676,61 @@ public class JenkinsReceiverTest {
 	}
 	
 	/**
-	 * Tests the performance of the test method when the data object is null.
+	 * Tests the performance of the test method when the response_url field value is null.
 	 */
 	@Test
 	public void testTest10() {
+		try {
+			MavenModuleSet maven = this.jenkins.createMavenProject("Maven");
+			String goals = "compile";
+			maven.setGoals(goals);
+			
+			SlackData data = new SlackData();
+			data.setText("test Maven all");
+			String user_name = "tommyv92";
+			data.setUser_name(user_name);
+			SlackMessage actual = this.receiver.test(data);
+			
+			String message = Messages.invalidResponseUrl();
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
+			
+			assert expected.equals(actual);
+		} catch (IOException e) {
+			assert false;
+		}
+	}
+	
+	/**
+	 * Tests the performance of the test method when the response_url field value is empty.
+	 */
+	@Test
+	public void testTest11() {
+		try {
+			MavenModuleSet maven = this.jenkins.createMavenProject("Maven");
+			String goals = "compile";
+			maven.setGoals(goals);
+			
+			SlackData data = new SlackData();
+			data.setText("test Maven all");
+			String user_name = "tommyv92";
+			data.setUser_name(user_name);
+			data.setResponse_url("");
+			SlackMessage actual = this.receiver.test(data);
+			
+			String message = Messages.invalidResponseUrl();
+			SlackMessage expected = new SlackMessage(message, Messages.danger());
+			
+			assert expected.equals(actual);
+		} catch (IOException e) {
+			assert false;
+		}
+	}
+	
+	/**
+	 * Tests the performance of the test method when the data object is null.
+	 */
+	@Test
+	public void testTest12() {
 		try {
 			SlackData data = null;
 			this.receiver.test(data);
@@ -711,10 +749,10 @@ public class JenkinsReceiverTest {
 	public void testListJobs1() {
 		SlackData data = new SlackData();
 		data.setText("list-jobs");
-		JSONResponse actual = this.receiver.listJobs(data);
+		SlackMessage actual = this.receiver.listJobs(data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.noJobsFound(), 
-				Messages.good()), StaplerResponse.SC_OK);
+		String message = Messages.noJobsFound();
+		SlackMessage expected = new SlackMessage(message, Messages.good());
 		
 		assert expected.equals(actual);
 	}
@@ -734,14 +772,13 @@ public class JenkinsReceiverTest {
 			
 			SlackData data = new SlackData();
 			data.setText("list-jobs");
-			JSONResponse actual = this.receiver.listJobs(data);
+			SlackMessage actual = this.receiver.listJobs(data);
 			
 			String message = "JOBS\n\n" 
 					+ freestyle.getDisplayName() + " (Free-style Project)\n" 
 					+ maven.getDisplayName() + " (Maven Project)\n" 
 					+ matrix.getDisplayName() + " (Multi-configuration Project)\n";
-			JSONResponse expected = new JSONResponse(new SlackMessage(message, 
-					Messages.good()), StaplerResponse.SC_OK);
+			SlackMessage expected = new SlackMessage(message, Messages.good());
 			
 			assert expected.equals(actual);
 		} catch (IOException e) {
@@ -757,11 +794,11 @@ public class JenkinsReceiverTest {
 	public void testListJobs3() {
 		SlackData data = new SlackData();
 		data.setText("list-jobs token");
-		JSONResponse actual = this.receiver.listJobs(data);
+		SlackMessage actual = this.receiver.listJobs(data);
 		
 		String command = data.getText().split(" ")[COMMAND_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.tooManyArguments(command), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.tooManyArguments(command);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -804,10 +841,10 @@ public class JenkinsReceiverTest {
 	public void testHelp1() {
 		SlackData data = new SlackData();
 		data.setText("help");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.help(), 
-				Messages.good()), StaplerResponse.SC_OK);
+		String message = Messages.help();
+		SlackMessage expected = new SlackMessage(message, Messages.good());
 		
 		assert expected.equals(actual);
 	}
@@ -820,10 +857,10 @@ public class JenkinsReceiverTest {
 	public void testHelp2() {
 		SlackData data = new SlackData();
 		data.setText("help build");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.helpBuild(), 
-				Messages.good()), StaplerResponse.SC_OK);
+		String message = Messages.helpBuild();
+		SlackMessage expected = new SlackMessage(message, Messages.good());
 		
 		assert expected.equals(actual);
 	}
@@ -836,10 +873,10 @@ public class JenkinsReceiverTest {
 	public void testHelp3() {
 		SlackData data = new SlackData();
 		data.setText("help test");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.helpTest(), 
-				Messages.good()), StaplerResponse.SC_OK);
+		String message = Messages.helpTest();
+		SlackMessage expected = new SlackMessage(message, Messages.good());
 		
 		assert expected.equals(actual);
 	}
@@ -852,10 +889,10 @@ public class JenkinsReceiverTest {
 	public void testHelp4() {
 		SlackData data = new SlackData();
 		data.setText("help list-jobs");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.helpListJobs(), 
-				Messages.good()), StaplerResponse.SC_OK);
+		String message = Messages.helpListJobs();
+		SlackMessage expected = new SlackMessage(message, Messages.good());
 		
 		assert expected.equals(actual);
 	}
@@ -868,10 +905,10 @@ public class JenkinsReceiverTest {
 	public void testHelp5() {
 		SlackData data = new SlackData();
 		data.setText("help help");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.helpHelp(), 
-				Messages.good()), StaplerResponse.SC_OK);
+		String message = Messages.helpHelp();
+		SlackMessage expected = new SlackMessage(message, Messages.good());
 		
 		assert expected.equals(actual);
 	}
@@ -884,11 +921,11 @@ public class JenkinsReceiverTest {
 	public void testHelp6() {
 		SlackData data = new SlackData();
 		data.setText("help version");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
 		String command = data.getText().split(" ")[COMMAND_PARAMETER_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.invalidCommand(command), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.invalidCommand(command);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}
@@ -901,11 +938,11 @@ public class JenkinsReceiverTest {
 	public void testHelp7() {
 		SlackData data = new SlackData();
 		data.setText("help token token");
-		JSONResponse actual = this.receiver.help(data);
+		SlackMessage actual = this.receiver.help(data);
 		
 		String command = data.getText().split(" ")[COMMAND_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.tooManyArguments(command), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.tooManyArguments(command);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);
 	}

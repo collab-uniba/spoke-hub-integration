@@ -3,8 +3,6 @@ package org.jenkinsci.plugins.spokehubintegration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.junit.After;
@@ -29,17 +27,15 @@ public class SlackWebhookEndpointTest {
 	 * Jenkins instance. 
 	 */
 	
-	private static final Logger LOGGER = Logger.getLogger(SlackWebhookEndpointTest.class.getName());
-	
 	@Rule 
 	public JenkinsRule jenkins = new JenkinsRule();
+	private SlashCommandGlobalConfiguration slashCommandConfiguration;
 	private JenkinsRule.WebClient client;
-	private SlashCommandGlobalConfig slashCommandConfiguration;
 	
 	@Before
 	public void setUp() {
 		this.client = this.jenkins.createWebClient();
-		this.slashCommandConfiguration = SlashCommandGlobalConfig.getInstance();
+		this.slashCommandConfiguration = SlashCommandGlobalConfiguration.getInstance();
 	}
 	
 	@After
@@ -68,75 +64,14 @@ public class SlackWebhookEndpointTest {
 			data.add(new NameValuePair("command", "/jenkins"));
 			data.add(new NameValuePair("text", "help"));
 			data.add(new NameValuePair("response_url", "https://hooks.slack.com/commands/1234/5678"));
-			WebResponse response = makePostRequest(data);
 			
-			assert response.getStatusCode() == StaplerResponse.SC_OK;
-		} catch (IOException e) {
-			LOGGER.log(Level.INFO, e.getMessage(), e);
-			assert false;
-		}
-	}
-	
-	/**
-	 * Tests the performance of the doIndex method when the value of the Slash Command 
-	 * Token is null.
-	 */
-	@Test
-	public void testDoIndex2() {
-		try {
-			this.slashCommandConfiguration.setSlackSlashCommandToken(null);
-			
-			WebResponse response = makePostRequest(null);
-			String content = response.getContentAsString();
-			
-			assert content.contains(Messages.tokenNotSet());
-			assert content.contains(Messages.danger());
-			assert response.getStatusCode() == StaplerResponse.SC_OK;
-		} catch (IOException e) {
-			LOGGER.log(Level.INFO, e.getMessage(), e);
-			assert false;
-		}
-	}
-	
-	/**
-	 * Tests the performance of the doIndex method when the Slash Command Token is empty.
-	 */
-	@Test
-	public void testDoIndex3() {
-		try {
-			this.slashCommandConfiguration.setSlackSlashCommandToken(new String());
-			
-			WebResponse response = makePostRequest(null);
-			String content = response.getContentAsString();
-			
-			assert content.contains(Messages.tokenNotSet());
-			assert content.contains(Messages.danger());
-			assert response.getStatusCode() == StaplerResponse.SC_OK;
-		} catch (IOException e) {
-			LOGGER.log(Level.INFO, e.getMessage(), e);
-			assert false;
-		}
-	}
-	
-	/**
-	 * Tests the performance of the doIndex method when the Slash Command Token and the 
-	 * token sent by Slack are not equal.
-	 */
-	@Test
-	public void testDoIndex4() {
-		try {
-			this.slashCommandConfiguration.setSlackSlashCommandToken("9YKoANNRwOGAHvoPWGzWyPbE");
-			
-			List<NameValuePair> data = new ArrayList<>();
-			data.add(new NameValuePair("token", "EbPyWzGWPovHAGOwRNNAoKY9"));
 			WebResponse response = makePostRequest(data);
 			String content = response.getContentAsString();
 			
-			assert content.contains(Messages.invalidToken());
-			assert content.contains(Messages.danger());
+			assert content.contains(Messages.requestReceived());
+			assert content.contains(Messages.good());
 			assert response.getStatusCode() == StaplerResponse.SC_OK;
 		} catch (IOException e) {
-			LOGGER.log(Level.INFO, e.getMessage(), e);
 			assert false;
 		}
 	}
@@ -145,13 +80,12 @@ public class SlackWebhookEndpointTest {
 	 * Tests the performance of the doIndex method when Slack sends an HTTP GET request.
 	 */
 	@Test
-	public void testDoIndex5() {
+	public void testDoIndex2() {
 		try {
 			WebResponse response = makeGetRequest(null);
 			
 			assert response.getContentAsString().contains("POST required");
 		} catch (IOException e) {
-			LOGGER.log(Level.INFO, e.getMessage(), e);
 			assert false;
 		}
 	}
@@ -159,13 +93,13 @@ public class SlackWebhookEndpointTest {
 	/**
 	 * Sends an HTTP POST request.
 	 * 
-	 * @param data - content of the HTTP POST request
+	 * @param data content of the HTTP POST request
 	 * @return response to the request
 	 * @throws IOException
 	 */
 	private WebResponse makePostRequest(List<NameValuePair> data) throws IOException {
         WebRequestSettings request = new WebRequestSettings(
-        		this.client.createCrumbedUrl("webhook/"), HttpMethod.POST);
+        		this.client.createCrumbedUrl("slashCommandWebhook/"), HttpMethod.POST);
 
         if (data != null)
             request.setRequestParameters(data);
@@ -176,13 +110,13 @@ public class SlackWebhookEndpointTest {
 	/**
 	 * Sends an HTTP GET request.
 	 * 
-	 * @param data - content of the HTTP GET request
+	 * @param data content of the HTTP GET request
 	 * @return response to the request
 	 * @throws IOException
 	 */
 	private WebResponse makeGetRequest(List<NameValuePair> data) throws IOException {
         WebRequestSettings request = new WebRequestSettings(
-        		this.client.createCrumbedUrl("webhook/"), HttpMethod.GET);
+        		this.client.createCrumbedUrl("slashCommandWebhook/"), HttpMethod.GET);
 
         if (data != null)
             request.setRequestParameters(data);

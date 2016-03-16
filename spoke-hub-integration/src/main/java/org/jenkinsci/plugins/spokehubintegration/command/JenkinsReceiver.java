@@ -20,13 +20,11 @@ import java.util.logging.Logger;
 
 import jenkins.model.Jenkins;
 
-import org.jenkinsci.plugins.spokehubintegration.JSONResponse;
 import org.jenkinsci.plugins.spokehubintegration.SlackData;
 import org.jenkinsci.plugins.spokehubintegration.SlackMessage;
 import org.jenkinsci.plugins.spokehubintegration.exception.WrongParameterSyntaxException;
 import org.jenkinsci.plugins.spokehubintegration.exception.InvalidParameterException;
 import org.jenkinsci.plugins.spokehubintegration.exception.WrongTestScopeException;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Class that executes commands.
@@ -50,10 +48,10 @@ public class JenkinsReceiver {
 	/**
 	 * Starts a build for any type of job.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse build(SlackData data) {
+	public SlackMessage build(SlackData data) {
 		String message;
 		String text = data.getText();
 		text = text.replaceAll("\\s*=\\s*", "=");
@@ -62,8 +60,7 @@ public class JenkinsReceiver {
 		if (!parseBuildCommand(commandFields)) {
 			message = Messages.incompleteCommandSyntax(commandFields[COMMAND_INDEX]);
 			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		String projectName = commandFields[JOB_PARAMETER_INDEX];
@@ -72,8 +69,7 @@ public class JenkinsReceiver {
 		if (project == null) {
 			message = Messages.projectNotFound(projectName);
 			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		boolean success;
@@ -89,8 +85,7 @@ public class JenkinsReceiver {
 			if (numberExpectedParameters < numberEnteredParameters) {
 				message = Messages.tooManyParameters(projectName);
 				LOGGER.log(Level.INFO, message);
-				return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-						StaplerResponse.SC_OK);
+				return new SlackMessage(message, Messages.danger());
 			}
 			
 			String parameters = ""; 
@@ -104,20 +99,17 @@ public class JenkinsReceiver {
 			} catch (WrongParameterSyntaxException e) {
 				message = Messages.wrongParameterSyntax(e.getMessage(), projectName);
 				LOGGER.log(Level.INFO, message, e);
-				return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-						StaplerResponse.SC_OK);
+				return new SlackMessage(message, Messages.danger());
 			} catch (InvalidParameterException e) {
 				message = Messages.invalidParameter(e.getMessage(), projectName);
 				LOGGER.log(Level.INFO, message, e);
-				return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-						StaplerResponse.SC_OK);
+				return new SlackMessage(message, Messages.danger());
 			}
 		} else {
 			if (numberEnteredParameters != 0) {
 				message = Messages.buildNotParameterized(projectName);
 				LOGGER.log(Level.INFO, message);
-				return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-						StaplerResponse.SC_OK);
+				return new SlackMessage(message, Messages.danger());
 			}
 			success = project.scheduleBuild(0, new SlackCause(slackUser));
 		}
@@ -128,13 +120,11 @@ public class JenkinsReceiver {
         	// Slack Plugin will notify the result of the build
         	message = Messages.buildScheduled(projectName);
         	LOGGER.log(Level.INFO, message);
-            return new JSONResponse(new SlackMessage(message, Messages.good()), 
-            		StaplerResponse.SC_OK);
+        	return new SlackMessage(message, Messages.good());
         } else {
         	message = Messages.buildNotScheduled(projectName);
         	LOGGER.log(Level.INFO, message);
-            return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-            		StaplerResponse.SC_OK);
+        	return new SlackMessage(message, Messages.danger());
         }
 	}
 	
@@ -142,7 +132,7 @@ public class JenkinsReceiver {
 	 * Checks the number of the arguments entered by a Slack user for the 
 	 * command build.
 	 * 
-	 * @param commandFields - entered arguments
+	 * @param commandFields entered arguments
 	 * @return true if the number of arguments is greater than one and even,
 	 * otherwise false
 	 */
@@ -155,7 +145,7 @@ public class JenkinsReceiver {
 	/**
 	 * Gets the number of parameters defined for the project.
 	 * 
-	 * @param project - project to build
+	 * @param project project to build
 	 * @return number of parameters
 	 */
 	private int getNumberJobParameters(AbstractProject<?, ?> project) {
@@ -167,8 +157,8 @@ public class JenkinsReceiver {
 	 * Check the syntax of the entered parameters and creates a list containing the 
 	 * values to use for the build.
 	 * 
-	 * @param project - project to build
-	 * @param parameters - entered parameters
+	 * @param project project to build
+	 * @param parameters entered parameters
 	 * @return list of values
 	 * @throws WrongParameterSyntaxException if the parameter syntax is wrong
 	 * @throws InvalidParameterException if the entered parameter does not exist for
@@ -226,10 +216,10 @@ public class JenkinsReceiver {
 	/**
 	 * Performs tests for a maven job.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse test(SlackData data) {
+	public SlackMessage test(SlackData data) {
 		String message = null;
 		String text = data.getText();
 		text = text.replaceAll("\\s*,\\s*", ",");
@@ -239,8 +229,7 @@ public class JenkinsReceiver {
 		if (commandFields.length < 3) {
 			message = Messages.incompleteCommandSyntax(commandFields[COMMAND_INDEX]);
 			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		String projectName = commandFields[JOB_PARAMETER_INDEX];
@@ -249,16 +238,14 @@ public class JenkinsReceiver {
 		if (project == null) {
 			message = Messages.projectNotFound(projectName);
 			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		// check if the project is a Maven Project
 		if (!(project instanceof AbstractMavenProject)) {
 			message = Messages.notMavenProject(projectName);
 			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		boolean error;
@@ -267,14 +254,19 @@ public class JenkinsReceiver {
 			if (error) {
 				message = Messages.wrongCommandSyntax(commandFields[COMMAND_INDEX], projectName);
 				LOGGER.log(Level.INFO, message);
-				return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-						StaplerResponse.SC_OK);
+				return new SlackMessage(message, Messages.danger());
 			}
 		} catch (WrongTestScopeException e) {
 			message = Messages.invalidTestScope(e.getMessage());
 			LOGGER.log(Level.INFO, message, e);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
+		}
+		
+		String response_url = data.getResponse_url();
+		if (response_url == null || response_url.isEmpty()) {
+			message = Messages.invalidResponseUrl();
+			LOGGER.log(Level.SEVERE, message);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		String slackUser = data.getUser_name();
@@ -293,9 +285,9 @@ public class JenkinsReceiver {
 		String color = null;
 		try {
 			maven.scheduleBuild2(0, new SlackCause(slackUser)).get();
-			LOGGER.log(Level.INFO, Messages.testScheduled(projectName));
+			LOGGER.log(Level.INFO, Messages.testPerformed(projectName));
 		} catch (InterruptedException | ExecutionException e) {
-			message = Messages.testNotScheduled(projectName);
+			message = Messages.testNotPerformed(projectName);
 			color = Messages.danger();
         	LOGGER.log(Level.INFO, message, e);
 		}
@@ -303,14 +295,14 @@ public class JenkinsReceiver {
 		restoreDefaultSettings(maven, goals, mavenOpts);
 		
 		// Slack Plugin will notify the result of the build
-		return new JSONResponse(new SlackMessage(message, color), StaplerResponse.SC_OK);
+		return new SlackMessage(message, color);
 	}
 
 	/**
 	 * Checks the number of the arguments entered by a Slack user for the 
 	 * command test and its scope.
 	 * 
-	 * @param commandFields - entered arguments
+	 * @param commandFields entered arguments
 	 * @return true if the number of arguments is correct, otherwise false
 	 * @throws WrongTestScopeException if the entered scope does not exist
 	 */
@@ -340,9 +332,9 @@ public class JenkinsReceiver {
 	/**
 	 * Restores the default setting for the maven project tested.
 	 * 
-	 * @param maven - maven project tested
-	 * @param goals - maven goals
-	 * @param mavenOpts - maven options
+	 * @param maven maven project tested
+	 * @param goals maven goals
+	 * @param mavenOpts maven options
 	 */
 	private void restoreDefaultSettings(MavenModuleSet maven, String goals, String mavenOpts) {
 		maven.setGoals(goals);
@@ -352,18 +344,17 @@ public class JenkinsReceiver {
 	/**
 	 * Lists all jobs.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse listJobs(SlackData data) {
+	public SlackMessage listJobs(SlackData data) {
 		String message;
-		String color;
 		String text = data.getText();
 		String[] commandFields = text.split(" ");
 		if (commandFields.length > 1) {
 			message = Messages.tooManyArguments(commandFields[COMMAND_INDEX]);
-			color = Messages.danger();
-			return new JSONResponse(new SlackMessage(message, color), StaplerResponse.SC_OK);
+			LOGGER.log(Level.SEVERE, message);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		ACL.impersonate(ACL.SYSTEM);
@@ -371,8 +362,8 @@ public class JenkinsReceiver {
 		// check if there are jobs in Jenkins
 		if (jobs == null || jobs.isEmpty()) {
 			message = Messages.noJobsFound();
-			color = Messages.good();
-			return new JSONResponse(new SlackMessage(message, color), StaplerResponse.SC_OK);
+			LOGGER.log(Level.INFO, message);
+			return new SlackMessage(message, Messages.good());
 		}
 		
 		message = "JOBS\n\n";
@@ -394,18 +385,17 @@ public class JenkinsReceiver {
 			}
 		}
 		message = message.concat(freestyleJobs + mavenJobs + externalJobs + matrixJobs);
-		color = Messages.good();
 		
-		return new JSONResponse(new SlackMessage(message, color), StaplerResponse.SC_OK);
+		return new SlackMessage(message, Messages.good());
 	}
 	
 	/**
 	 * Lists all the available commands or a detailed description of single command.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse help(SlackData data) {
+	public SlackMessage help(SlackData data) {
 		String text = data.getText();
 		String[] commandFields = text.split(" ");
 		String message;
@@ -421,27 +411,24 @@ public class JenkinsReceiver {
 			} catch (InvalidParameterException e) {
 				message = Messages.invalidCommand(command);
 				LOGGER.log(Level.INFO, message, e);
-				return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-						StaplerResponse.SC_OK);
+				return new SlackMessage(message, Messages.danger());
 			}
 			break;
 
 		default:
 			message = Messages.tooManyArguments(commandFields[COMMAND_INDEX]);
 			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			return new SlackMessage(message, Messages.danger());
 		}
 		LOGGER.log(Level.INFO, message);
 		
-		return new JSONResponse(new SlackMessage(message, Messages.good()), 
-				StaplerResponse.SC_OK);
+		return new SlackMessage(message, Messages.good());
 	}
 
 	/**
 	 * Gets a detailed description of single command.
 	 * 
-	 * @param command - command you want to get information
+	 * @param command command you want to get information
 	 * @return detailed description of the command
 	 * @throws InvalidParameterException if the entered command does not exist
 	 */

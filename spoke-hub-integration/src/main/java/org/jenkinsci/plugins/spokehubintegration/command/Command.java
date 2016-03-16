@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.spokehubintegration.command;
 
-import org.jenkinsci.plugins.spokehubintegration.JSONResponse;
 import org.jenkinsci.plugins.spokehubintegration.SlackData;
+import org.jenkinsci.plugins.spokehubintegration.SlackMessage;
 
 /**
  * Command interface for command execution.
@@ -15,9 +15,9 @@ public interface Command {
 	/**
 	 * Executes the command.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	JSONResponse execute(SlackData data);
+	SlackMessage execute(SlackData data);
 
 }

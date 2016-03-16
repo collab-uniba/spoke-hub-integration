@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.kohsuke.stapler.StaplerResponse;
 
 public class CommandControllerTest {
 	
@@ -51,12 +50,13 @@ public class CommandControllerTest {
 		this.data.setChannel_name("general");
 		this.data.setUser_id("U2147483697");
 		this.data.setUser_name("tommyv92");
+		this.data.setCommand("/jenkins");
 		this.data.setText("help");
 		this.data.setResponse_url("https://hooks.slack.com/commands/1234/5678");
 		
 		Object response = this.controller.handleData(this.data);
 		
-		assert response instanceof JSONResponse;
+		assert response instanceof SlackMessage;
 	}
 	
 	/**
@@ -66,10 +66,10 @@ public class CommandControllerTest {
 	public void testHandleData2() {
 		this.data.setText(new String());
 		
-		JSONResponse actual = (JSONResponse) this.controller.handleData(this.data);
+		SlackMessage actual = (SlackMessage) this.controller.handleData(this.data);
 		
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.commandNotTyped(), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.commandNotTyped();
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);		
 	}
@@ -83,11 +83,11 @@ public class CommandControllerTest {
 		String text = "version";
 		this.data.setText(text);
 		
-		JSONResponse actual = (JSONResponse) this.controller.handleData(this.data);
+		SlackMessage actual = (SlackMessage) this.controller.handleData(this.data);
 		
 		String command = text.split(" ")[COMMAND_INDEX];
-		JSONResponse expected = new JSONResponse(new SlackMessage(Messages.commandNotFound(command), 
-				Messages.danger()), StaplerResponse.SC_OK);
+		String message = Messages.commandNotFound(command);
+		SlackMessage expected = new SlackMessage(message, Messages.danger());
 		
 		assert expected.equals(actual);		
 	}
