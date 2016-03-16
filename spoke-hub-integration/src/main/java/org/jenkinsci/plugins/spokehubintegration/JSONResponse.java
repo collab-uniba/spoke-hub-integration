@@ -9,12 +9,12 @@ import javax.servlet.ServletException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Class that implements {@link HttpResponse} interface.
@@ -25,30 +25,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JSONResponse implements HttpResponse {
 
 	private static final Logger LOGGER = Logger.getLogger(JSONResponse.class.getName());
-	private String json;
+	private JSONObject json;
     private int status;
 
     /**
      * Creates an HTTP response.
      * 
-     * @param content - response content
-     * @param status - status code of the response
+     * @param content response content
+     * @param status status code of the response
      */
     public JSONResponse(Object content, int status) {
-    	this.json = null;
-        try {
-            this.json = new ObjectMapper().writeValueAsString(createResponse(content));
-        } catch (JsonProcessingException e) {
-            this.json = new JSONObject().put("text", e.getMessage()).toString();
-            LOGGER.log(Level.INFO, null, e);
-        }
+    	this.json = createResponse(content);
         this.status = status;
     }
     
     /**
      * Creates the response to be sent to Slack.
      * 
-     * @param content - response content
+     * @param content response content
      * @return response to be sent
      */
     private JSONObject createResponse(Object content) {
@@ -74,6 +68,41 @@ public class JSONResponse implements HttpResponse {
         res.setContentType("application/json");
         res.getWriter().println(this.json);
     }
+    
+   /**
+    * Sends an HTTP POST response to Slack.
+    * 
+    * @param response_url URL assigned to your Slash Command
+    * @return true if the sending of the message is successfully performed, otherwise false
+    */
+    public boolean sendResponse(String response_url) {
+    	boolean result = true;
+    	HttpClient client = new HttpClient();
+    	PostMethod post = new PostMethod(response_url);
+    	post.addParameter("payload", this.json.toString());
+    	post.getParams().setContentCharset("UTF-8");
+    	String message;
+    	try {
+	    	int responseCode = client.executeMethod(post);
+	        if(responseCode == HttpStatus.SC_OK) {
+	        	message = Messages.sendingSucceeded();
+	            LOGGER.log(Level.INFO, message);
+	        } else {
+	        	String response = post.getResponseBodyAsString();
+	        	message = Messages.sendingFailed(response);
+	            LOGGER.log(Level.SEVERE, message);
+	            result = false;
+	        }
+		} catch (IOException e) {
+			message = Messages.sendingFailed(e.getMessage());
+			LOGGER.log(Level.SEVERE, message, e);
+			result = false;
+		} finally {
+            post.releaseConnection();
+        }
+		
+		return result;
+    }
 
 	@Override
 	public int hashCode() {
@@ -93,12 +122,12 @@ public class JSONResponse implements HttpResponse {
 		if (!(obj instanceof JSONResponse))
 			return false;
 		JSONResponse other = (JSONResponse) obj;
-		if (json == null) {
+		if (this.json == null) {
 			if (other.json != null)
 				return false;
-		} else if (!json.equals(other.json))
+		} else if (!this.json.equals(other.json))
 			return false;
-		if (status != other.status)
+		if (this.status != other.status)
 			return false;
 		return true;
 	}

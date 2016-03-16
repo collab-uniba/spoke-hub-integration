@@ -14,7 +14,7 @@ public interface Controller {
 	/**
 	 * Performs a specific request.
 	 * 
-	 * @param data - content of the HTTP POST request
+	 * @param data content of the HTTP POST request
 	 * @return response to the requested command
 	 */
 	Object handleData(SlackData data);

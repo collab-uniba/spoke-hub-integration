@@ -15,7 +15,7 @@ public class SlackCause extends Cause {
 	/**
 	 * Stores the username of the Slack user who made the request.
 	 * 
-	 * @param username - username of the Slack user
+	 * @param username username of the Slack user
 	 */
     public SlackCause(String username) {
         this.username = username;

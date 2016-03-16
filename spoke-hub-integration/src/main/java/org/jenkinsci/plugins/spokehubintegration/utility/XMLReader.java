@@ -32,7 +32,7 @@ public class XMLReader {
 	/**
 	 * Create a newly {@link Document} object.
 	 * 
-	 * @param path - file path
+	 * @param path file path
 	 */
 	public XMLReader(String path) {
 		File xmlFile = new File(path);
@@ -42,14 +42,14 @@ public class XMLReader {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			this.doc = docBuilder.parse(xmlFile);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			LOGGER.log(Level.INFO, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 		}
 	}
 	
 	/**
 	 * Create a newly {@link Document} object.
 	 * 
-	 * @param stream - stream containing the content to be parsed
+	 * @param stream stream containing the content to be parsed
 	 */
 	public XMLReader(InputStream stream) {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -58,14 +58,14 @@ public class XMLReader {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			this.doc = docBuilder.parse(stream);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			LOGGER.log(Level.INFO, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 		}
 	}
 
 	/**
 	 * Reads the values of the class and method parameters for the requested command.
 	 * 
-	 * @param command - command requested
+	 * @param command command requested
 	 * @return values of the class and method parameters
 	 */
 	public List<String> getParameters(String command) {
@@ -90,8 +90,8 @@ public class XMLReader {
 	/**
 	 * Reads the value of a tag.
 	 * 
-	 * @param tag - tag
-	 * @param element - node to which the tag belongs
+	 * @param tag tag
+	 * @param element node to which the tag belongs
 	 * @return value of the tag
 	 */
 	private String getTagValue(String tag, Element element) {

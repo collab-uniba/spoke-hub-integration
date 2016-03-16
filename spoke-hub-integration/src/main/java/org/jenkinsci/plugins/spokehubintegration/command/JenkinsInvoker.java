@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.spokehubintegration.command;
 
-import org.jenkinsci.plugins.spokehubintegration.JSONResponse;
 import org.jenkinsci.plugins.spokehubintegration.SlackData;
+import org.jenkinsci.plugins.spokehubintegration.SlackMessage;
 
 /**
  * Class that requires the execution of a command.
@@ -16,7 +16,7 @@ public class JenkinsInvoker {
 	/**
 	 * Instantiates the requested command.
 	 * 
-	 * @param command - requested command
+	 * @param command requested command
 	 */
 	public JenkinsInvoker(Command command) {
 		this.command = command;
@@ -25,40 +25,40 @@ public class JenkinsInvoker {
 	/**
 	 * Starts a build for any type of job.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse build(SlackData data) {
+	public SlackMessage build(SlackData data) {
 		return this.command.execute(data);
 	}
 	
 	/**
 	 * Performs tests for a maven job.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse test(SlackData data) {
+	public SlackMessage test(SlackData data) {
 		return this.command.execute(data);
 	}
 	
 	/**
 	 * Lists all jobs.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse listJobs(SlackData data) {
+	public SlackMessage listJobs(SlackData data) {
 		return this.command.execute(data);
 	}
 	
 	/**
 	 * Lists all the available commands or a detailed description of single command.
 	 * 
-	 * @param data - data sent by Slack
+	 * @param data data sent by Slack
 	 * @return response to the requested command
 	 */
-	public JSONResponse help(SlackData data) {
+	public SlackMessage help(SlackData data) {
 		return this.command.execute(data);
 	}
 

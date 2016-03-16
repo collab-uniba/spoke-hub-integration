@@ -46,7 +46,7 @@ public class ParameterizedStaplerRequest implements StaplerRequest {
 	/**
 	 * Stores the value entered by the user for the specified parameter.
 	 * 
-	 * @param value - parameter value
+	 * @param value parameter value
 	 */
 	public ParameterizedStaplerRequest(String value) {
 		this.value = value;

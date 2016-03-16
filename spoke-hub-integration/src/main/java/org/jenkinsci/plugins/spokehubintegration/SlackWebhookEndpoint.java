@@ -22,14 +22,20 @@ import hudson.model.UnprotectedRootAction;
 @Extension
 public class SlackWebhookEndpoint implements UnprotectedRootAction {
 	
+	/*
+	 * NOTE: @Extension annotation must be placed to let Jenkins know about this extension
+	 * 
+	 * NOTE: slashCommandConfiguration variable must be instantiated in this class
+	 */
+	
 	private static final Logger LOGGER = Logger.getLogger(SlackWebhookEndpoint.class.getName());
-	private SlashCommandGlobalConfig slashCommandConfiguration;
+	private SlashCommandGlobalConfiguration slashCommandConfiguration;
     
 	/**
-	 * Initializes a {@link SlashCommandGlobalConfig} object.
+	 * Initializes a {@link SlashCommandGlobalConfiguration} object.
 	 */
     public SlackWebhookEndpoint() {
-    	this.slashCommandConfiguration = SlashCommandGlobalConfig.getInstance();
+    	this.slashCommandConfiguration = SlashCommandGlobalConfiguration.getInstance();
 	}
 
 	@Override
@@ -50,41 +56,18 @@ public class SlackWebhookEndpoint implements UnprotectedRootAction {
 	/**
 	 * Receives the HTTP POST requests sent by Slack.
 	 * 
-	 * @param request - request
+	 * @param request request
 	 * @return response to the request
 	 */
 	@RequirePOST
     public HttpResponse doIndex(StaplerRequest request) {
-		String message;
-		// checks if jenkins was restarted
-		if (this.slashCommandConfiguration == null) {
-			message = Messages.restartJenkins();
-			LOGGER.log(Level.INFO, message);
-            return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-            		StaplerResponse.SC_OK);
-		}
+		CommandThread thread = new CommandThread(this.slashCommandConfiguration, request);
+		thread.start();
 		
-		String slackSlashCommandToken = this.slashCommandConfiguration.getSlackSlashCommandToken();
-		// check if the token is set
-		if (slackSlashCommandToken == null || slackSlashCommandToken.isEmpty()) {
-			message = Messages.tokenNotSet();
-			LOGGER.log(Level.INFO, message);
-            return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-            		StaplerResponse.SC_OK);
-        }
-		
-		SlackData data = new SlackData();
-		request.bindParameters(data);
-		// check if the token is correct
-		if (!slackSlashCommandToken.equals(data.getToken())) {
-			message = Messages.invalidToken();
-			LOGGER.log(Level.INFO, message);
-            return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-            		StaplerResponse.SC_OK);
-		}
-		
-		Controller controller = CommandController.getInstance();
-		return (JSONResponse) controller.handleData(data);
+		String message = Messages.requestReceived();
+		LOGGER.log(Level.INFO, message);
+		return new JSONResponse(new SlackMessage(message, Messages.good()), 
+				StaplerResponse.SC_OK);
 	}
 
 }

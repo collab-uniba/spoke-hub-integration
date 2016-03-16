@@ -37,7 +37,7 @@ public class SlackData {
 	/**
 	 * Updates the slash command token.
 	 * 
-	 * @param token - new slash command token
+	 * @param token new slash command token
 	 */
 	public void setToken(String token) {
 		this.token = token;
@@ -55,7 +55,7 @@ public class SlackData {
 	/**
 	 * Updates the team id.
 	 * 
-	 * @param team_id - new team id
+	 * @param team_id new team id
 	 */
 	public void setTeam_id(String team_id) {
 		this.team_id = team_id;
@@ -73,7 +73,7 @@ public class SlackData {
 	/**
 	 * Updates the team domain.
 	 * 
-	 * @param team_domain - new team domain
+	 * @param team_domain new team domain
 	 */
 	public void setTeam_domain(String team_domain) {
 		this.team_domain = team_domain;
@@ -91,7 +91,7 @@ public class SlackData {
 	/**
 	 * Updates the channel id.
 	 * 
-	 * @param channel_id - new channel id
+	 * @param channel_id new channel id
 	 */
 	public void setChannel_id(String channel_id) {
 		this.channel_id = channel_id;
@@ -109,7 +109,7 @@ public class SlackData {
 	/**
 	 * Updates the channel name.
 	 * 
-	 * @param channel_name - new channel name
+	 * @param channel_name new channel name
 	 */
 	public void setChannel_name(String channel_name) {
 		this.channel_name = channel_name;
@@ -127,7 +127,7 @@ public class SlackData {
 	/**
 	 * Updates the user id.
 	 * 
-	 * @param user_id - new user id
+	 * @param user_id new user id
 	 */
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
@@ -145,7 +145,7 @@ public class SlackData {
 	/**
 	 * Updates the username.
 	 * 
-	 * @param user_name - new username
+	 * @param user_name new username
 	 */
 	public void setUser_name(String user_name) {
 		this.user_name = user_name;
@@ -163,7 +163,7 @@ public class SlackData {
 	/**
 	 * Updates the slash command.
 	 * 
-	 * @param command - new slash command
+	 * @param command new slash command
 	 */
 	public void setCommand(String command) {
 		this.command = command;
@@ -181,7 +181,7 @@ public class SlackData {
 	/**
 	 * Updates the message text.
 	 * 
-	 * @param text - new message text
+	 * @param text new message text
 	 */
 	public void setText(String text) {
 		this.text = text;
@@ -199,7 +199,7 @@ public class SlackData {
 	/**
 	 * Updates the response URL.
 	 * 
-	 * @param response_url - new response URL
+	 * @param response_url new response URL
 	 */
 	public void setResponse_url(String response_url) {
 		this.response_url = response_url;

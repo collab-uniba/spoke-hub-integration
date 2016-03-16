@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import org.jenkinsci.plugins.spokehubintegration.command.Command;
 import org.jenkinsci.plugins.spokehubintegration.command.JenkinsReceiver;
 import org.jenkinsci.plugins.spokehubintegration.utility.XMLReader;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Singleton class that implements {@link Controller} interface.
@@ -59,18 +58,16 @@ public class CommandController implements Controller {
 		// check if the user typed the command
 		if (command.isEmpty()) {
 			message = Messages.commandNotTyped();
-			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			LOGGER.log(Level.SEVERE, message);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		List<String> pair = this.reader.getParameters(command);
 		// check if the command exists
 		if (pair.isEmpty()) {
 			message = Messages.commandNotFound(command);
-			LOGGER.log(Level.INFO, message);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			LOGGER.log(Level.SEVERE, message);
+			return new SlackMessage(message, Messages.danger());
 		}
 		
 		String classe = pair.get(CLASS);
@@ -89,9 +86,8 @@ public class CommandController implements Controller {
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException 
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			message = Messages.notImplementedCommand(command);
-			LOGGER.log(Level.INFO, message, e);
-			return new JSONResponse(new SlackMessage(message, Messages.danger()), 
-					StaplerResponse.SC_OK);
+			LOGGER.log(Level.SEVERE, message, e);
+			return new SlackMessage(message, Messages.danger());
 		}
 	}
 
