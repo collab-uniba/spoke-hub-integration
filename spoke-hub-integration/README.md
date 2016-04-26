@@ -70,7 +70,7 @@ The plugin currently supports the following commands:
 	
 	4. Create a new Slash Command paying attention to the following points:
 	   
-	   - In the "URL" field type your Jenkins URL follow by "webhook/" (E.g. http://YOUR_JENKINS_URL/webhook/)
+	   - In the "URL" field type your Jenkins URL follow by "slashCommandWebhook/" (E.g. http://YOUR_JENKINS_URL/slashCommandWebhook/)
 	   
 	   - Leave the "Method" field set to POST
 	   
